@@ -915,4 +915,81 @@ DEVICES = [
         },
         cert_bypass=CertBypass.WRAP
     ),
+    Device(
+        'rodin-os4',
+        'Redmi Turbo 4/POCO X7 Pro - HyperOS 4',
+        {
+            'sec_get_vfy_policy': PatchStage(
+                'sec_get_vfy_policy',
+                pattern='5f 24 03 d5 40 01 00 b4',
+                replacement='00 00 80 52 c0 03 5f d6',
+                match_mode=MatchMode.ALL,
+                description='Don\'t enforce secure boot policy',
+            ),
+            'bypass_security_control': PatchStage(
+                'bypass_security_control',
+                pattern='28 17 40 b9 c8 01 00 34',
+                replacement='28 17 40 b9 1f 20 03 d5',
+                match_mode=MatchMode.ALL,
+                description='Skip security error branch - always execute commands',
+            ),
+            'spoof_sboot_state': PatchStage(
+                'spoof_get_sboot_state',
+                pattern='3f 23 03 d5 fd 7b be a9 f3 0b 00 f9 fd 03 00 91 f3 03 00 aa 20 00 80 52',
+                replacement='48 44 00 52 08 00 00 b9 00 00 80 52 c0 03 5f d6 1f 20 03 d5 1f 20 03 d5',
+                match_mode=MatchMode.ALL,
+                description='Force sboot state to always be ATTR_SBOOT_ONLY_ENABLE_ON_SCHIP',
+            ),
+            'spoof_lock_state': PatchStage(
+                'spoof_lock_state',
+                pattern='3f 23 03 d5 fd 7b be a9 f4 4f 01 a9 fd 03 00 91 f3 03 00 aa 86 01 00 94',
+                replacement='88 00 80 52 08 00 00 b9 00 00 80 52 c0 03 5f d6 1f 20 03 d5 1f 20 03 d5',
+                match_mode=MatchMode.ALL,
+                description='Force lock state to always be LKS_LOCK',
+            ),
+            'bypass_lock_control': PatchStage(
+                'bypass_lock_control',
+                pattern='00 f8 3b 91 c3 00 00 14 e8 0f 40 b9 1f 05 00 71 21 01 00 54',
+                replacement='00 f8 3b 91 c3 00 00 14 e8 0f 40 b9 1f 05 00 71 09 00 00 14',
+                match_mode=MatchMode.ALL,
+                description='Allow fastboot flashing regardless of lock state',
+            ),
+            'bypass_cmd_erase_lock_control': PatchStage(
+                'bypass_cmd_erase_lock_control',
+                pattern='e8 0f 40 b9 1f 05 00 71 81 00 00 54',
+                replacement='e8 0f 40 b9 1f 05 00 71 04 00 00 14',
+                match_mode=MatchMode.ALL,
+                description='Allow fastboot erasing regardless of lock state',
+            ),
+            'avb_allow_verification_error': PatchStage(
+                'avb_allow_verification_error',
+                pattern='e1 07 9f 1a f6 17 9f 1a 15 05 88 1a',
+                replacement='e1 07 9f 1a 36 00 80 52 15 05 88 1a',
+                match_mode=MatchMode.ALL,
+                description='Force AVB_SLOT_VERIFY_FLAGS_ALLOW_VERIFICATION_ERROR',
+            ),
+            'force_green_state': PatchStage(
+                'force_green_state',
+                pattern='e8 04 00 f0 00 c1 01 b9 bf 23 03 d5',
+                replacement='e8 04 00 f0 1f c1 01 b9 bf 23 03 d5',
+                match_mode=MatchMode.ALL,
+                description='Force boot state to always be set to green',
+            ),
+            'bypass_imgkey_region_check': PatchStage(
+                'bypass_imgkey_region_check',
+                pattern='fe 0a 01 94 00 05 00 34',
+                replacement='fe 0a 01 94 28 00 00 14',
+                match_mode=MatchMode.ALL,
+                description='Skip region check',
+            ),
+            'bypass_sku_check': PatchStage(
+                'bypass_sku_check',
+                pattern='f6 03 00 aa 4f f0 fe 97 e0 00 00 34',
+                replacement='f6 03 00 aa 4f f0 fe 97 7c 00 00 14',
+                match_mode=MatchMode.ALL,
+                description='Skip sku check',
+            ),
+        },
+        cert_bypass=CertBypass.OVERRIDE
+    ),
 ]
